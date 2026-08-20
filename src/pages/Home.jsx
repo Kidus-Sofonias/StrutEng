@@ -1,0 +1,259 @@
+import { Link } from "react-router-dom";
+import HeroBanner from "../components/HeroBanner";
+import Reveal from "../components/Reveal";
+import SectionHead from "../components/SectionHead";
+import CoverflowCarousel from "../components/CoverflowCarousel";
+import Cube3D from "../components/Cube3D";
+import useCountUp from "../hooks/useCountUp";
+import { services, highDensity } from "../data/services";
+import { company } from "../data/company";
+import { clients } from "../data/clients";
+import { allProjects } from "../data/projects";
+import { projectMedia } from "../data/media";
+
+const featured = [
+  "gebeta-lehager-project-gorgora",
+  "fellege-ghion-resort-hotel",
+  "a-vision-trading-plc-3b-g-27-five-star-hotel",
+  "grand-view-addis-real-estate",
+  "value-real-estate-project-for-century-addis-real-estate",
+  "city-center-real-estate-4b-g-18-mixed-use",
+  "summer-real-estate-b-g-26-mub-with-post-tensioned-slab",
+]
+  .map((slug) => allProjects.find((p) => p.slug === slug))
+  .filter(Boolean)
+  .slice(0, 7);
+
+function BigStat({ value, suffix, label }) {
+  const [ref, n] = useCountUp(value, { start: true });
+  return (
+    <div className="bigstat" ref={ref}>
+      <div className="number">
+        {n}
+        {suffix && <em>{suffix}</em>}
+      </div>
+      <div className="label">{label}</div>
+    </div>
+  );
+}
+
+function statusClass(status) {
+  return status
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+export default function Home() {
+  return (
+    <>
+      {/* ════════ HERO ════════ */}
+      <HeroBanner
+        image="/images/hero-building.jpg"
+        eyebrow="Est. 2015 · Addis Ababa, Ethiopia"
+        title="Engineering that builds"
+        accent="Ethiopia."
+        description="Over 300 structural projects — from Ethiopia's tallest buildings to its largest stadiums."
+        actions={
+          <>
+            <Link to="/services" className="btn btn-primary">
+              Our Services
+            </Link>
+            <Link to="/contact" className="btn btn-ghost">
+              Get a Quote
+            </Link>
+          </>
+        }
+        stats={company.stats}
+      />
+
+      {/* ════════ CLIENT MARQUEE ════════ */}
+      <div className="marquee" aria-label="Our clients">
+        <div className="marquee-track">
+          {[...clients, ...clients].map((c, i) => (
+            <span key={`marquee-${i}`}>{c}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* ════════ SERVICES: 3D Cube + Numbered Index ════════ */}
+      <section className="section">
+        <div className="container">
+          <Reveal>
+            <SectionHead
+              eyebrow="What we do"
+              title="Six divisions, one team"
+              text="From concept to construction — 24 specialists covering the full engineering lifecycle."
+            />
+          </Reveal>
+          <Reveal direction="scale">
+            <Cube3D />
+          </Reveal>
+          <ul className="index-list" style={{ marginTop: 60 }}>
+            {services.map((s, i) => (
+              <Reveal key={s.id} delay={(i % 3) + 1}>
+                <li>
+                  <div className="idx-num">
+                    {String(i + 1).padStart(2, "0")}
+                  </div>
+                  <div className="body">
+                    <h3>
+                      <Link to={`/services#${s.slug}`}>{s.title}</Link>
+                    </h3>
+                    <p>{s.short}</p>
+                  </div>
+                  <span className="idx-arrow">→</span>
+                </li>
+              </Reveal>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* ════════ ABOUT SPLIT ════════ */}
+      <section className="section section-alt">
+        <div className="container split">
+          <Reveal direction="left">
+            <div className="split-figure">
+              <span className="figure-tag">Since 2015</span>
+              <img
+                src="/images/about.jpg"
+                alt="Strut Engineering team and office"
+              />
+            </div>
+          </Reveal>
+          <Reveal direction="right">
+            <div className="split-text">
+              <span className="eyebrow">About the firm</span>
+              <h2 className="headline">
+                A trusted name in Ethiopian engineering
+              </h2>
+              <p>
+                Established in 2015, Strut Engineering specializes in
+                structural design for buildings, factories, stadiums and
+                bridges — with deep expertise in project management and
+                quality control.
+              </p>
+              <Link
+                to="/about"
+                className="btn btn-outline"
+                style={{ marginTop: 12 }}
+              >
+                More About Us
+              </Link>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ════════ STATS BAND ════════ */}
+      <section className="section">
+        <div className="container">
+          <div className="stats-band">
+            <BigStat value={300} suffix="+" label="Structural projects" />
+            <BigStat value={27} suffix="+" label="Storeys tallest design" />
+            <BigStat value={24} suffix="" label="Engineers" />
+            <BigStat value={5.7} suffix="B" label="Birr flagship resorts" />
+          </div>
+        </div>
+      </section>
+
+      {/* ════════ FEATURED PROJECTS: COVERFLOW ════════ */}
+      <section className="section section-alt">
+        <div className="container">
+          <Reveal>
+            <SectionHead
+              eyebrow="Portfolio"
+              title="Featured projects"
+              text="Landmark structures Strut Engineering has delivered."
+            />
+          </Reveal>
+          <Reveal direction="scale">
+            <CoverflowCarousel
+              items={featured}
+              renderItem={(p, isActive) => {
+                const [img1] = projectMedia(
+                  p,
+                  0,
+                  p.category?.id || "structural"
+                );
+                return (
+                  <>
+                    <div className="media">
+                      <img src={img1.src} alt={img1.alt} loading="lazy" />
+                    </div>
+                    <div className="copy">
+                      {isActive && (
+                        <span className={`status ${statusClass(p.status)}`}>
+                          {p.status}
+                        </span>
+                      )}
+                      <h3>{p.name}</h3>
+                      <div className="sub">
+                        {p.client} · {p.location}
+                      </div>
+                    </div>
+                  </>
+                );
+              }}
+            />
+          </Reveal>
+          <Reveal>
+            <div style={{ textAlign: "center", marginTop: 52 }}>
+              <Link to="/projects" className="btn btn-primary">
+                View All Projects
+              </Link>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ════════ HIGH-DENSITY SPECIALTY ════════ */}
+      <section className="section">
+        <div className="container specialty-split">
+          <Reveal direction="left">
+            <div className="split-figure">
+              <span className="figure-tag">Specialty</span>
+              <img
+                src="/images/project-tall-1.jpg"
+                alt="High-density apartment tower"
+              />
+            </div>
+          </Reveal>
+          <Reveal direction="right">
+            <div className="split-text">
+              <span className="eyebrow">Our specialty</span>
+              <h2 className="headline">{highDensity.title}</h2>
+              <p>{highDensity.short}</p>
+              <Link
+                to="/services"
+                className="btn btn-outline"
+                style={{ marginTop: 12 }}
+              >
+                See How We Work
+              </Link>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ════════ CTA ════════ */}
+      <section className="section section-alt">
+        <div className="container">
+          <Reveal>
+            <div className="cta">
+              <h2>Have a project in mind?</h2>
+              <p>
+                From structural design to full site supervision — let's build
+                something together.
+              </p>
+              <Link to="/contact" className="btn btn-white">
+                Contact Us
+              </Link>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+    </>
+  );
+}
