@@ -1,15 +1,16 @@
 import { allProjects } from "./projects";
+import { normalizeClientKey } from "./normalize";
 
 // Pre-built client → projects lookup
 const clientProjectMap = {};
 for (const p of allProjects) {
-  const key = (p.client || "").trim();
+  const key = normalizeClientKey(p.client);
   if (!key) continue;
   if (!clientProjectMap[key]) clientProjectMap[key] = [];
   clientProjectMap[key].push(p);
 }
 export function getClientProjects(clientName) {
-  return clientProjectMap[clientName] || [];
+  return clientProjectMap[normalizeClientKey(clientName)] || [];
 }
 
 export const clients = [

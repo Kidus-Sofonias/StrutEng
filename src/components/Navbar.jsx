@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
 
 const links = [
-  { to: "/", label: "Home" },
   { to: "/about", label: "About" },
   { to: "/services", label: "Services" },
   { to: "/projects", label: "Projects" },
@@ -18,7 +17,6 @@ export default function Navbar() {
   const [atTop, setAtTop] = useState(true);
   const lastScrollY = useRef(0);
   const location = useLocation();
-  const isHome = location.pathname === "/";
   const panelRef = useRef(null);
 
   /* ── Scroll logic: detect scroll direction + hero area ── */
@@ -29,7 +27,7 @@ export default function Navbar() {
 
     setScrolled(y > 60);
     setAtTop(y < 20);
-    setDarkNav(isHome && y < window.innerHeight - 100);
+    setDarkNav(y < window.innerHeight - 100);
 
     // Hide nav on scroll down (only after scrolling past 200px)
     // Always show on scroll up
@@ -38,7 +36,7 @@ export default function Navbar() {
     } else {
       setHidden(false);
     }
-  }, [isHome]);
+  }, []);
 
   useEffect(() => {
     onScroll();
@@ -53,8 +51,9 @@ export default function Navbar() {
 
   /* ── Lock body scroll when mobile menu is open ── */
   useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = open ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => { document.body.style.overflow = previousOverflow; };
   }, [open]);
 
   /* ── Keyboard: Escape to close ── */
@@ -82,7 +81,7 @@ export default function Navbar() {
         <div className="nav-inner">
           {/* ── Brand ── */}
           <Link to="/" className="brand">
-            <img src="/images/logo-full.png" alt="Strut Engineering" />
+            <img src="/images/logo-transparent.png" alt="Strut Engineering home" />
             <span className="word">
               STRUT ENGINEERING
               <small>PLC · Est. 2015</small>
@@ -101,11 +100,6 @@ export default function Navbar() {
                 <span className="nav-link-label">{l.label}</span>
               </NavLink>
             ))}
-            <span className="nav-cta">
-              <Link to="/contact" className="btn btn-primary btn-sm">
-                Get a Quote
-              </Link>
-            </span>
           </nav>
 
           {/* ── Animated Hamburger ── */}
@@ -135,7 +129,7 @@ export default function Navbar() {
           {/* ── Panel Header ── */}
           <div className="mobile-panel-header">
             <Link to="/" className="brand brand-mobile" onClick={() => setOpen(false)}>
-              <img src="/images/logo-full.png" alt="Strut Engineering" />
+              <img src="/images/logo-transparent.png" alt="Strut Engineering home" />
               <span className="word">
                 STRUT ENGINEERING
                 <small>PLC · Est. 2015</small>
@@ -164,15 +158,6 @@ export default function Navbar() {
               </NavLink>
             ))}
 
-            <div className="mobile-cta-wrapper" style={{ "--i": links.length }}>
-              <Link
-                to="/contact"
-                className="btn btn-primary btn-lg mobile-cta"
-                onClick={() => setOpen(false)}
-              >
-                Get a Quote
-              </Link>
-            </div>
           </nav>
 
           {/* ── Panel Footer ── */}

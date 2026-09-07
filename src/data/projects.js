@@ -10,6 +10,72 @@ const slug = (s) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
+const canonicalProjectSlugs = {
+  fullDesign: [
+    "ato-tquabo-2b-g-14-mixed-use-building",
+    "bigeta-mixed-b-g-11-mixed-use-building",
+    "levi-plaza-real-estate-4b-g-15-mixed-use-building",
+    "fellege-ghion-resort-hotel",
+    "ethiopian-orthodox-church-b-g-5-mixed-use-building",
+    "kab-real-estate-one-member-plc-b-g-6-building",
+    "amalto-real-estate-b-g-12-mub",
+    "tikur-anbessa-real-estate-3b-g-20-mub",
+    "new-factory-for-dag-trading-plc",
+    "mdf-factory",
+  ],
+  structural: [
+    "gebeta-lehager-project-gorgora",
+    "value-real-estate-project-for-century-addis-real-estate",
+    "city-center-real-estate-4b-g-18-mixed-use",
+    "a-vision-trading-plc-3b-g-27-five-star-hotel",
+    "grand-view-addis-real-estate",
+    "minaye-plc-map-6-2b-g-20-mub",
+    "minaye-plc-map-7-2b-g-16-mub",
+    "minaye-plc-map-3-3b-g-20-mub",
+    "gebeta-letewlede-sofumer-resort-hotel",
+    "ene-liya-tquabo-bole-b-g-10-mixed-use-building",
+    "yirgalem-textile-real-estate-development",
+    "summer-real-estate-b-g-26-mub-with-post-tensioned-slab",
+    "ethiopian-broadcasting-corporation-studio-design-expansion",
+    "ics-cafeteria-office-expansion-with-retrofitting",
+    "foundation-design-retrofitting-for-ato-tesfaye",
+    "addis-ortho-hospital-project",
+  ],
+  mep: [
+    "fellege-ghion-5-star-resort-hotel",
+    "amalto-real-estate-b-g-12-mub-mep",
+    "ethiopian-orthodox-church-b-g-5-mixed-use-building-mep",
+  ],
+  supervision: [
+    "amalto-real-estate-b-g-12-mub-supervision",
+    "steely-rmi-plc-expansion-projects-supervision",
+    "mdf-factory-supervision",
+    "ato-tquabo-2b-g-14-mixed-use-building-supervision",
+    "nola-real-estate-b-g-11-mub",
+    "new-factory-for-dag-trading-plc-supervision",
+    "ethiopian-orthodox-church-b-g-5-mixed-use-building-supervision",
+    "a-vision-trading-plc-3b-g-27-building-supervision",
+    "levi-plaza-real-estate-4b-g-15-mub-supervision",
+    "grand-view-addis-real-estate-3b-g-12-apartment",
+  ],
+  infrastructure: [
+    "compound-road-design-for-steely-rmi-plc",
+    "compound-road-design-for-asmen-plc",
+    "water-treatment-plant-design-for-worabe-university",
+    "water-treatment-plant-design-for-jinka-university",
+  ],
+  industrial: [
+    "kite-packaging-carton-project",
+    "steely-rmi-plc-expansion-projects-industrial",
+    "mdf-factory-industrial",
+    "silo-foundation-design-for-prima-food-complex",
+    "foundation-design-for-tube-milling-factory",
+  ],
+};
+
+const slugGroupKey = (categoryId) =>
+  categoryId.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+
 const gorgoraGallery = [
   "/images/projects/gorgora/gor-1.jpg",
   "/images/projects/gorgora/gor-7.jpg",
@@ -544,8 +610,9 @@ export const projectCategories = [
 export const allProjects = (() => {
   const seen = {};
   return projectCategories.flatMap((c) =>
-    c.projects.map((p) => {
-      const base = slug(p.name);
+    c.projects.map((p, index) => {
+      const group = canonicalProjectSlugs[slugGroupKey(c.id)] || [];
+      const base = p.slug || group[index] || slug(p.name);
       let s = base;
       let n = 1;
       while (seen[s]) s = `${base}-${++n}`;

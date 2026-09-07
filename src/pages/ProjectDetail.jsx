@@ -24,6 +24,7 @@ function StackedGallery({ images, projectName }) {
   const [activeIdx, setActiveIdx] = useState(0);
   const [direction, setDirection] = useState(0); // -1 = prev, 1 = next
   const [animating, setAnimating] = useState(false);
+  const galleryRef = useRef(null);
   const timeoutRef = useRef(null);
 
   const goTo = (idx, dir) => {
@@ -50,12 +51,13 @@ function StackedGallery({ images, projectName }) {
   // Keyboard nav
   useEffect(() => {
     const handler = (e) => {
+      if (!galleryRef.current?.contains(document.activeElement)) return;
       if (e.key === "ArrowRight") next();
       if (e.key === "ArrowLeft") prev();
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  });
+  }, [activeIdx, animating, images.length]);
 
   // Swipe support
   const touchRef = useRef(null);
@@ -78,7 +80,14 @@ function StackedGallery({ images, projectName }) {
   const totalVisible = Math.min(4, images.length);
 
   return (
-    <div className="stacked-gallery" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+    <div
+      className="stacked-gallery"
+      ref={galleryRef}
+      tabIndex={0}
+      aria-label={`${projectName} photo gallery`}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+    >
       {/* Stacked thumbnails behind */}
       <div className="stacked-stack">
         {images.slice(activeIdx + 1, activeIdx + totalVisible).map((src, i) => {
@@ -164,6 +173,8 @@ function StackedGallery({ images, projectName }) {
             key={`thumb-${i}`}
             className={`stacked-thumb ${i === activeIdx ? "active" : ""}`}
             onClick={() => goTo(i, i > activeIdx ? 1 : -1)}
+            aria-label={`Show photo ${i + 1} of ${images.length}`}
+            aria-current={i === activeIdx ? "true" : undefined}
           >
             <img src={src} alt={`Thumbnail ${i + 1}`} />
           </button>
@@ -245,6 +256,15 @@ export default function ProjectDetail() {
               </dl>
             </div>
           </Reveal>
+        </div>
+      </section>
+
+      <section className="project-spec-band" aria-label="Project summary">
+        <div className="container project-spec-grid">
+          <div><span>Client</span><strong>{project.client}</strong></div>
+          <div><span>Location</span><strong>{project.location}</strong></div>
+          <div><span>Discipline</span><strong>{project.category.title}</strong></div>
+          <div><span>Status</span><strong>{project.status}</strong></div>
         </div>
       </section>
 

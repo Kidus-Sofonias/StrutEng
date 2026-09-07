@@ -8,7 +8,7 @@ import { services, highDensity } from "../data/services";
 function ServiceAccordion({ service, isOpen, onToggle, index }) {
   return (
     <Reveal delay={(index % 3) + 1}>
-      <div className={`svc-accordion ${isOpen ? "open" : ""}`}>
+      <div id={`service-${service.id}`} className={`svc-accordion ${isOpen ? "open" : ""}`}>
         <button
           className="svc-accordion-header"
           onClick={onToggle}
@@ -99,6 +99,16 @@ export default function Services() {
               text="Each division operates with deep expertise in its domain — together, they deliver the complete engineering lifecycle."
             />
           </Reveal>
+
+          <div className="service-index" aria-label="Engineering disciplines">
+            {services.map((service, i) => (
+              <a className="service-index-item" href={`#service-${service.id}`} key={service.id}>
+                <span>{String(i + 1).padStart(2, "0")}</span>
+                <strong>{service.title.split(" & ")[0]}</strong>
+                <em>↗</em>
+              </a>
+            ))}
+          </div>
 
           <div className="svc-accordion-wrap">
             {services.map((s, i) => (

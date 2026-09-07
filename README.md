@@ -95,7 +95,12 @@ strut-engineering/
 │   │   ├── SectionHead.jsx       # Section header component
 │   │   ├── Carousel.jsx          # Horizontal snap-scroll carousel
 │   │   ├── Cube3D.jsx            # 3D rotating services cube
-│   │   ├── ClientConstellation.jsx # Interactive client network
+│   │   ├── ClientTimeline.jsx    # Scroll-driven 3D client archive (cube)
+│   │   ├── ClientCube.jsx        # Recycled-face 3D cube of the archive
+│   │   ├── CubeFace.jsx          # Single editorial client cover face
+│   │   ├── ClientMetadata.jsx    # Active client editorial rail
+│   │   ├── ClientProgress.jsx    # Minimal index + progress rule
+│   │   ├── ClientFaceDrawer.jsx  # Project record drawer
 │   │   ├── Footer.jsx            # Clean footer with developer credit
 │   │   ├── QuickContact.jsx      # Floating WhatsApp/Telegram buttons
 │   │   └── ScrollToTop.jsx       # Route-change scroll reset

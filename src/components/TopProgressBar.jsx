@@ -11,6 +11,7 @@ export default function TopProgressBar() {
   const [progress, setProgress] = useState(0);
   const [visible, setVisible] = useState(false);
   const timerRef = useRef(null);
+  const frameRef = useRef(null);
 
   useEffect(() => {
     // Reset on route change
@@ -18,7 +19,7 @@ export default function TopProgressBar() {
     setProgress(0);
 
     // Animate to ~30% immediately
-    requestAnimationFrame(() => setProgress(30));
+    frameRef.current = requestAnimationFrame(() => setProgress(30));
 
     // Quickly ramp to ~70%
     timerRef.current = setTimeout(() => setProgress(70), 80);
@@ -31,6 +32,7 @@ export default function TopProgressBar() {
       clearTimeout(timerRef.current);
       clearTimeout(t2);
       clearTimeout(t3);
+      cancelAnimationFrame(frameRef.current);
     };
   }, [pathname]);
 

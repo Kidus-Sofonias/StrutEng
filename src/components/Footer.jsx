@@ -10,8 +10,8 @@ export default function Footer() {
         <div>
           <Link to="/" className="brand">
             <img
-              src="/images/logo-full.png"
-              alt="Strut Engineering"
+              src="/images/logo-transparent.png"
+              alt="Strut Engineering home"
               style={{ height: 40, filter: "brightness(1.5)" }}
             />
             <span className="word">

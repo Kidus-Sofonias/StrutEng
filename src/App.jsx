@@ -15,6 +15,7 @@ import ProjectDetail from "./pages/ProjectDetail";
 import Clients from "./pages/Clients";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import ContinueExploring from "./components/ContinueExploring";
 
 export default function App() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
           </Routes>
         </PageTransition>
       </main>
+      <ContinueExploring />
       <Footer />
       <QuickContact />
     </div>

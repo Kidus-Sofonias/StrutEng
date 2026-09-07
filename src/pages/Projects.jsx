@@ -56,6 +56,10 @@ function ProjectCard({ p }) {
           <span>{p.location}</span>
           <span>{p.status}</span>
         </div>
+        <div className="project-card-factline">
+          <span>{p.category.title.replace(" Projects", "")}</span>
+          <span>{p.facts?.[0]?.[1] || "Portfolio record"}</span>
+        </div>
         <span className="card-arrow">View case study →</span>
       </div>
     </Link>
@@ -140,7 +144,7 @@ export default function Projects() {
           </Reveal>
 
           <Reveal>
-            <div className="filters">
+            <div className="filters" aria-label="Filter projects by discipline">
               <button
                 className={`filter-btn ${active === "all" ? "active" : ""}`}
                 onClick={() => setActive("all")}

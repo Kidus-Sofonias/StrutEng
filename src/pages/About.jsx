@@ -76,6 +76,30 @@ export default function About() {
         </div>
       </section>
 
+      <section className="about-timeline section section-alt">
+        <div className="container">
+          <SectionHead
+            eyebrow="A practice in motion"
+            title="Ten years of making complexity legible"
+            text="The practice has grown by staying close to the work, the people and the places it serves."
+          />
+          <div className="about-timeline-track">
+            {[
+              ["2015", "Strut begins", "A focused structural design practice is established in Addis Ababa."],
+              ["2018", "Full lifecycle", "Architecture, MEP, infrastructure and supervision join the practice."],
+              ["2022", "Higher, wider", "The portfolio expands across towers, factories, resorts and public works."],
+              ["Today", "Built for what is next", "A senior-led team keeps engineering ambitious and buildable."],
+            ].map(([year, title, text]) => (
+              <article className="about-timeline-item" key={year}>
+                <span>{year}</span>
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Vision & Mission */}
       <section className="section section-alt">
         <div className="container">

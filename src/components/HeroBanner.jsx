@@ -20,6 +20,7 @@ export default function HeroBanner({
 
   return (
     <section className={`hero ${compact ? "compact" : ""} ${loaded ? "loaded" : ""}`}>
+      <div className="hero-grid" aria-hidden="true" />
       {image ? (
         <div
           className="hero-figure"
@@ -50,6 +51,11 @@ export default function HeroBanner({
         {description && <p className="hero-description">{description}</p>}
         {actions && <div className="hero-actions">{actions}</div>}
         {children}
+      </div>
+
+      <div className="hero-frame" aria-hidden="true">
+        <span>STRUT / {compact ? "FIELD NOTE" : "ENGINEERING ARCHIVE"}</span>
+        <span>ADDIS ABABA · ETHIOPIA</span>
       </div>
 
       {showScroll && (

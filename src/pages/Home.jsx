@@ -76,6 +76,30 @@ export default function Home() {
         </div>
       </div>
 
+      <section className="home-signal section">
+        <div className="container home-signal-grid">
+          <div className="home-signal-copy">
+            <span className="eyebrow">The Strut method</span>
+            <h2 className="headline">
+              Structure is the first gesture of every great place.
+            </h2>
+            <p>
+              We bring architecture, engineering and delivery into one clear
+              conversation — so ambitious ideas can become durable places.
+            </p>
+            <div className="home-signal-meta">
+              <span>01 / 04</span>
+              <span>Concept · design · delivery</span>
+            </div>
+          </div>
+          <div className="home-signal-figure">
+            <img src="/images/project-tall-2.jpg" alt="Structural engineering project" />
+            <span className="home-signal-stamp">Built for tomorrow</span>
+            <span className="home-signal-coordinates">09°01'N · 38°45'E</span>
+          </div>
+        </div>
+      </section>
+
       {/* ════════ SERVICES: 3D Cube + Numbered Index ════════ */}
       <section className="section">
         <div className="container">
@@ -107,6 +131,25 @@ export default function Home() {
               </Reveal>
             ))}
           </ul>
+        </div>
+      </section>
+
+      <section className="home-process section section-alt">
+        <div className="container">
+          <SectionHead
+            eyebrow="One connected practice"
+            title="From first line to final inspection"
+            text="A single team carries the intent of a project through every decision."
+          />
+          <div className="home-process-grid">
+            {["Brief", "Design", "Document", "Build"].map((step, i) => (
+              <div className="home-process-step" key={step}>
+                <span>{String(i + 1).padStart(2, "0")}</span>
+                <h3>{step}</h3>
+                <p>{["Listen closely to the ambition.", "Make the idea structurally possible.", "Turn decisions into a clear package.", "Stay close until the work is real."][i]}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

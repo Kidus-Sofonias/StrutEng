@@ -11,13 +11,26 @@ export default function CoverflowCarousel({ items, renderItem }) {
   const containerRef = useRef(null);
   const n = items.length;
   const BASE_SPEED = 2500;
+  const draggingRef = useRef(false);
+  const movedRef = useRef(false);
 
   // Touch swipe support
   const swipeRef = useRef({ startX: 0, startTime: 0 });
   const onPointerDown = (e) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    draggingRef.current = true;
+    movedRef.current = false;
     swipeRef.current = { startX: e.clientX, startTime: Date.now() };
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    clearInterval(timerRef.current);
+  };
+  const onPointerMove = (e) => {
+    if (!draggingRef.current) return;
+    if (Math.abs(e.clientX - swipeRef.current.startX) > 8) movedRef.current = true;
   };
   const onPointerUp = (e) => {
+    if (!draggingRef.current) return;
+    draggingRef.current = false;
     const dx = e.clientX - swipeRef.current.startX;
     const dt = Date.now() - swipeRef.current.startTime;
     // Quick swipe or long drag (> 40px)
@@ -27,12 +40,8 @@ export default function CoverflowCarousel({ items, renderItem }) {
       } else {
         setCenter((c) => (c - 1 + n) % n);
       }
-      clearInterval(timerRef.current);
-      setTimeout(() => {
-        if (!paused && n > 1) {
-          timerRef.current = setInterval(advance, BASE_SPEED);
-        }
-      }, 6000);
+      setPaused(true);
+      window.setTimeout(() => setPaused(false), 6000);
     }
   };
 
@@ -86,7 +95,9 @@ export default function CoverflowCarousel({ items, renderItem }) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
+      onPointerCancel={() => { draggingRef.current = false; }}
       role="region"
       aria-label="Featured projects carousel"
       style={{ touchAction: 'pan-y' }}
@@ -110,7 +121,14 @@ export default function CoverflowCarousel({ items, renderItem }) {
                 : `translateX(-50%) scale(${pos.scale}) translateX(${pos.tx}px) translateZ(${pos.tz}px) rotateY(${pos.rot}deg)`,
               zIndex: pos.z,
             }}
-            onClick={() => goTo(i)}
+            onClick={(e) => {
+              if (movedRef.current) {
+                e.preventDefault();
+                movedRef.current = false;
+                return;
+              }
+              goTo(i);
+            }}
           >
             <Link to={`/projects/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
               <div className="coverflow-card">

@@ -3,8 +3,6 @@ import HeroBanner from "../components/HeroBanner";
 import Reveal from "../components/Reveal";
 import { company } from "../data/company";
 
-const RECIPIENT = "sofoniaskidus@gmail.com";
-
 const emptyForm = { name: "", email: "", phone: "", service: "", message: "" };
 
 function buildMailto({ name, email, phone, service, message }) {
@@ -14,7 +12,7 @@ function buildMailto({ name, email, phone, service, message }) {
   const body = encodeURIComponent(
     `Hello,\n\nA new inquiry has been submitted through the official website.\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone || "N/A"}\nService needed: ${service || "N/A"}\n\nMessage:\n${message}\n\n---\nWebsite: Official Company Website\nSubmission time: ${new Date().toLocaleString()}`
   );
-  return `mailto:${RECIPIENT}?subject=${subject}&body=${body}`;
+  return `mailto:${company.email}?subject=${subject}&body=${body}`;
 }
 
 export default function Contact() {
@@ -55,7 +53,7 @@ export default function Contact() {
                 </div>
                 <div className="c-line">
                   <span className="ico">✉️</span>
-                  <a href={`mailto:${RECIPIENT}`}>{RECIPIENT}</a>
+                  <a href={`mailto:${company.email}`}>{company.email}</a>
                 </div>
                 <div className="c-line">
                   <span className="ico">📍</span>
@@ -135,7 +133,7 @@ export default function Contact() {
                   lineHeight: 1.7,
                 }}
               >
-                This opens your email app and sends directly to {RECIPIENT} —
+                This opens your email app and sends directly to {company.email} —
                 no third-party service, completely free.
               </p>
               <form onSubmit={handleSubmit}>

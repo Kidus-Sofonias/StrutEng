@@ -22,7 +22,7 @@ This is a single-page application (SPA) built with React 18 and Vite 5, using cl
 ### Interactive Components
 - **LiquidBg** — Canvas-based animated gradient background with warm engineering palette colors that respond to scroll position
 - **Cube3D** — CSS 3D-transformed rotating cube with 6 faces (one per service division), hover-to-pause
-- **ClientConstellation** — Canvas-based interactive node network showing client relationships with hover tooltips
+- **ClientTimeline** — "Clients Through Time": a CSS-3D archive cube pinned via GSAP ScrollTrigger on desktop (scrubbed rotation, subtle snap), drag/swipe on touch, and an accessible flat list under `prefers-reduced-motion`. Faces are recycled over a virtual sequence, so any number of clients can ride four lateral faces
 
 ### Page Components
 Each page follows a consistent pattern:

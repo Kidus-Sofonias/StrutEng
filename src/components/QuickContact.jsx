@@ -2,7 +2,8 @@ import { company } from "../data/company";
 
 export default function QuickContact() {
   return (
-    <div className="quick-contact">
+    <div className="quick-contact" aria-label="Quick contact">
+      <span className="quick-contact-label">Talk to Strut</span>
       <a
         className="qc qc-wa"
         href={company.whatsapp}
