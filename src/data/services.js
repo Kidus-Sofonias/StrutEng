@@ -2,10 +2,10 @@ export const services = [
   {
     id: "architectural",
     slug: "architectural-landscape",
+    icon: "🏛️",
     title: "Architectural & Landscape Design",
     short:
       "Detailed plans and specifications for buildings and structures — from first sketches to construction documents.",
-    icon: "🏛️",
     intro:
       "Architectural design services involve creating detailed plans and specifications for buildings and structures.",
     items: [
@@ -40,10 +40,10 @@ export const services = [
   {
     id: "structural",
     slug: "structural-engineering",
+    icon: "🏗️",
     title: "Structural Engineering Design",
     short:
       "Our specialty — over 300 projects across Ethiopia, including some of the tallest buildings and biggest stadiums.",
-    icon: "🏗️",
     intro:
       "The mastery you can find at Strut Engineering is its specialization in structural engineering. We have been engaged in structural engineering of over 300 projects all over Ethiopia — including some of the tallest buildings as well as the biggest stadium projects.",
     items: [
@@ -69,10 +69,10 @@ export const services = [
   {
     id: "infrastructure",
     slug: "infrastructure",
+    icon: "🛣️",
     title: "Infrastructure Engineering Design",
     short:
       "Large-scale civil engineering — roads, water treatment plants and factories, from planning to design.",
-    icon: "🛣️",
     intro:
       "Infrastructure engineering design involves the planning, analyzing and designing of large-scale civil engineering projects such as roads, bridges, tunnels, dams, water supply systems and water treatment — from defining project objectives to delivering high-quality engineering solutions.",
     items: [
@@ -94,10 +94,10 @@ export const services = [
   {
     id: "industrial",
     slug: "industrial",
+    icon: "⚙️",
     title: "Industrial Engineering Services",
     short:
       "Supporting process-intensive industries — oil & gas, chemical plants, water treatment, manufacturing and food processing.",
-    icon: "⚙️",
     intro:
       "This division supports process-intensive industries such as oil & gas, chemical plants, water treatment, manufacturing and food processing facilities — with a focus on productivity, safety and system optimization.",
     items: [
@@ -127,10 +127,10 @@ export const services = [
   {
     id: "mep",
     slug: "mep",
+    icon: "💡",
     title: "MEP Engineering Design",
     short:
       "Mechanical, electrical and plumbing design — the systems that keep buildings running.",
-    icon: "💡",
     intro:
       "A MEP project encompasses the planning, design, installation, testing, commissioning and maintenance of the systems that support a building's operation — residential, commercial or industrial.",
     items: [
@@ -152,10 +152,10 @@ export const services = [
   {
     id: "supervision",
     slug: "contract-administration",
+    icon: "📋",
     title: "Contract Administration & Site Supervision",
     short:
       "Managing contracts and overseeing physical sites to ensure efficiency and compliance.",
-    icon: "📋",
     intro:
       "Our contract administration and site supervision scope encompasses critical aspects of project management in construction — managing contracts and overseeing physical sites to ensure operational efficiency and compliance with regulations.",
     items: [

@@ -21,13 +21,17 @@ export default function useCountUp(target, { duration = 2000, start = false } = 
         started.current = true;
 
         const t0 = performance.now();
+        // Keep decimal targets like 5.7 decimal; integers stay whole.
+        const decimals = Number.isInteger(target)
+          ? 0
+          : (String(target).split(".")[1] || "").length;
         const tick = (now) => {
           const elapsed = now - t0;
           const p = Math.min(elapsed / duration, 1);
 
           // easeOutQuart — smooth deceleration, no bounce
           const eased = 1 - Math.pow(1 - p, 4);
-          const current = Math.round(target * eased);
+          const current = Number((target * eased).toFixed(decimals));
 
           setValue(current);
 

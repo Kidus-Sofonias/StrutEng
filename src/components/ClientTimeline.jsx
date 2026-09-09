@@ -174,6 +174,7 @@ export default function ClientTimeline({ clients }) {
     if (tweenRef.current) tweenRef.current.kill();
     dragRef.current = {
       startX: e.clientX,
+      startY: e.clientY,
       startPos: posRef.current,
     };
     e.currentTarget.setPointerCapture?.(e.pointerId);
@@ -182,9 +183,11 @@ export default function ClientTimeline({ clients }) {
     (e) => {
       if (!dragRef.current) return;
       const dx = e.clientX - dragRef.current.startX;
+      const dy = e.clientY - dragRef.current.startY;
+      const distance = Math.abs(dx) >= Math.abs(dy) ? dx : -dy;
       const dragStep = 110;
       const next = clampIndex(
-        dragRef.current.startPos - dx / dragStep,
+        dragRef.current.startPos - distance / dragStep,
         n,
       );
       setFloat(next);
@@ -201,6 +204,53 @@ export default function ClientTimeline({ clients }) {
   useEffect(() => {
     modeRef.current = mode;
   }, [mode]);
+
+  const wheelLockRef = useRef(false);
+  const onWheel = useCallback((e) => {
+    if (modeRef.current !== "swipe" || wheelLockRef.current) return;
+    wheelLockRef.current = true;
+    goToClient(Math.round(posRef.current) + (e.deltaY > 0 ? 1 : -1));
+    window.setTimeout(() => {
+      wheelLockRef.current = false;
+    }, 450);
+  }, [goToClient]);
+
+  /* Mobile: scroll-based client navigation (vertical scroll = next/prev client) */
+  useEffect(() => {
+    if (mode !== "swipe" || n < 2) return undefined;
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    if (!isMobile) return undefined;
+
+    let ticking = false;
+    let lastScrollY = window.scrollY;
+    let accumulated = 0;
+    const threshold = 80; // px of scroll to trigger next/prev
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const currentY = window.scrollY;
+        const delta = currentY - lastScrollY;
+        lastScrollY = currentY;
+        accumulated += delta;
+
+        if (Math.abs(accumulated) >= threshold) {
+          const direction = accumulated > 0 ? 1 : -1;
+          const current = Math.round(posRef.current);
+          const next = current + direction;
+          if (next >= 0 && next < n && next !== current) {
+            goToClient(next);
+          }
+          accumulated = 0;
+        }
+        ticking = false;
+      });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [mode, n, goToClient]);
 
   /* ── Reset when clients or mode change ── */
   useEffect(() => {
@@ -357,6 +407,7 @@ export default function ClientTimeline({ clients }) {
             onPointerMove={onPointerMove}
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
+            onWheel={onWheel}
             onKeyDown={(e) => {
               if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
               const focusedInside =

@@ -4,8 +4,12 @@ import HeroBanner from "../components/HeroBanner";
 import Reveal from "../components/Reveal";
 import SectionHead from "../components/SectionHead";
 import CoverflowCarousel from "../components/CoverflowCarousel";
-import { projectCategories, allProjects } from "../data/projects";
-import { galleryImages } from "../data/clients";
+import {
+  projectCategories,
+  allProjects,
+  uniqueProjects,
+  chipLabel,
+} from "../data/projects";
 import { projectMedia } from "../data/media";
 
 const projectVideos = [
@@ -29,38 +33,113 @@ const featuredProjects = allProjects
 const displayFeatured =
   featuredProjects.length >= 3 ? featuredProjects : allProjects.slice(0, 7);
 
+// ── Scale model ──────────────────────────────────────────
+// Tile size reflects real project scale: storeys, site area,
+// investment size — plus a boost for spotlighted landmarks.
+const CAT_WEIGHT = {
+  "full-design": 6,
+  structural: 6,
+  industrial: 4,
+  mep: 3,
+  supervision: 3,
+  infrastructure: 2,
+};
+const LANDMARK_SLUGS = new Set(displayFeatured.map((p) => p.slug));
+
+function projectScale(p) {
+  let score = CAT_WEIGHT[p.category.id] ?? 2;
+  let label = "";
+
+  // Storeys — from facts, or the project name for design/structural/industrial
+  // records. Service records (MEP/supervision) only score scale from their own
+  // facts, so supervising a 27-storey tower doesn't masquerade as the tower.
+  const DESIGN_CATS = new Set(["full-design", "structural", "industrial"]);
+  const isDesign = DESIGN_CATS.has(p.category.id);
+  const weight = isDesign ? 1 : 0.3; // service records shrink toward their own scope
+  const storeys =
+    p.facts?.find(([k]) => k.toLowerCase() === "storeys")?.[1] ||
+    (isDesign ? p.name : "");
+  let maxFloors = 0;
+  let towers = 1;
+  for (const m of storeys.matchAll(
+    /(?:(\d+)\s*[×x]\s*)?(\d+)?\s*b\s*\+\s*g\s*\+\s*(\d+)/gi
+  )) {
+    const mult = m[1] ? Number(m[1]) : 1;
+    const floors = (Number(m[2] || 0) + Number(m[3])) * mult;
+    if (floors > maxFloors) {
+      maxFloors = floors;
+      towers = mult;
+    }
+  }
+  if (!maxFloors && /up to (\d+)/i.test(storeys)) {
+    maxFloors = Number(storeys.match(/up to (\d+)/i)[1]);
+  }
+  if (maxFloors) {
+    score += maxFloors * weight;
+    label = towers > 1 ? `${towers} towers · ${maxFloors} levels` : `${maxFloors} levels`;
+  }
+
+  // Investment — "4.5B birr"
+  const invest = p.facts?.find(([k]) => k.toLowerCase() === "investment")?.[1];
+  if (invest) {
+    const m = invest.match(/([\d.]+)\s*b/i);
+    if (m) {
+      score += Number(m[1]) * 10 * weight;
+      if (!label) label = `${invest.replace(/birr/i, "").trim()} birr`;
+    }
+  }
+
+  // Site area — hectares or m² (only large sites move the needle)
+  const areaFact = p.facts?.find(([k]) => /^(area|site)$/i.test(k))?.[1];
+  if (areaFact) {
+    const ha = areaFact.match(/([\d.]+)\s*ha/i);
+    const m2 = areaFact.match(/([\d,]+)\s*m(?:²|2)/i);
+    if (ha) {
+      score += Math.min(40, (Number(ha[1]) * 10000) / 2500) * weight;
+      if (!label) label = `${ha[1]} ha site`;
+    } else if (m2) {
+      const m2val = parseInt(m2[1].replace(/,/g, ""), 10);
+      score += Math.min(40, m2val / 2500) * weight;
+      if (!label && m2val >= 5000) label = `${m2[1]} m²`;
+    }
+  }
+
+  if (LANDMARK_SLUGS.has(p.slug)) {
+    score += 10;
+    if (!label) label = "Flagship project";
+  }
+
+  const tier =
+    score >= 26 ? "m-huge" : score >= 14 ? "m-tall" : score >= 6 ? "m-mid" : "m-short";
+  return { tier, label };
+}
+
+
 function statusClass(s) {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
-function ProjectCard({ p }) {
-  const [img1, img2] = projectMedia(p, 0, p.category.id);
+function MasonryTile({ p, i, label }) {
+  const [img] = projectMedia(p, i, p.category.id);
   return (
-    <Link to={`/projects/${p.slug}`} className="pcard">
-      <div className="media">
-        <img className="cover" src={img1.src} alt={img1.alt} loading="lazy" />
-        <img className="thumb" src={img2.src} alt={img2.alt} loading="lazy" />
+    <Link to={`/projects/${p.slug}`} className="m-tile">
+      <div className="m-media">
+        <img src={img.src} alt={img.alt} loading="lazy" />
       </div>
-      <div className="copy">
-        <span className={`status ${statusClass(p.status)}`}>{p.status}</span>
+      <div className="m-veil" />
+      <span className={`status ${statusClass(p.status)} m-status`}>
+        {p.status}
+      </span>
+      <div className="m-info">
+        <div className="m-cat">
+          {(p.disciplines || [chipLabel(p.category)]).join(" · ")}
+        </div>
         <h3>{p.name}</h3>
-        <div className="sub">
+        <div className="m-sub">
           {p.client} · {p.location}
         </div>
-        {p.note && (
-          <p style={{ fontSize: "0.88rem", color: "var(--ink-muted)" }}>
-            {p.note}
-          </p>
-        )}
-        <div className="tags">
-          <span>{p.location}</span>
-          <span>{p.status}</span>
-        </div>
-        <div className="project-card-factline">
-          <span>{p.category.title.replace(" Projects", "")}</span>
-          <span>{p.facts?.[0]?.[1] || "Portfolio record"}</span>
-        </div>
-        <span className="card-arrow">View case study →</span>
+        {label && <div className="m-scale">{label}</div>}
+        <span className="m-arrow">View project →</span>
       </div>
     </Link>
   );
@@ -85,7 +164,12 @@ export default function Projects() {
   return (
     <>
       <HeroBanner
-        image="/images/project-tall-1.jpg"
+        image={[
+          "/images/prj-1.jpg",
+          "/images/prj-2.jpg",
+          "/images/prj-3.jpg",
+          "/images/prj-4.jpg",
+        ]}
         compact
         eyebrow="Our work"
         title="Projects"
@@ -138,8 +222,8 @@ export default function Projects() {
           <Reveal>
             <SectionHead
               eyebrow="All projects"
-              title="Our complete portfolio"
-              text={`${totalProjects} projects across 6 engineering disciplines.`}
+              title="The portfolio wall"
+              text={`${active === "all" ? uniqueProjects.length : (categorized[active]?.items || []).length} projects across 6 engineering disciplines — tile size reflects project scale; tap any for the full case study.`}
             />
           </Reveal>
 
@@ -163,47 +247,23 @@ export default function Projects() {
               ))}
             </div>
           </Reveal>
+          <p className="m-scroll-hint">Swipe up to browse ↑</p>
 
-          {active === "all"
-            ? cats.map((c) => {
-                const items = categorized[c.id]?.items || [];
-                if (items.length === 0) return null;
+          <div className="masonry-wrapper">
+            <div className="masonry">
+              {(active === "all"
+                ? uniqueProjects
+                : categorized[active]?.items || []
+              ).map((p, i) => {
+                const { tier, label } = projectScale(p);
                 return (
-                  <div key={c.id} style={{ marginBottom: 72 }}>
-                    <Reveal>
-                      <span className="eyebrow">{c.desc}</span>
-                      <h2
-                        className="headline"
-                        style={{
-                          fontSize: "clamp(1.3rem, 2.4vw, 1.8rem)",
-                          marginBottom: 28,
-                        }}
-                      >
-                        {c.title}
-                      </h2>
-                    </Reveal>
-                    <div className="projects-grid">
-                      {items.map((p, i) => (
-                        <Reveal key={p.slug} delay={(i % 2) + 1}>
-                          <ProjectCard p={p} />
-                        </Reveal>
-                      ))}
-                    </div>
-                  </div>
+                  <Reveal key={p.slug} delay={i % 2} className={tier}>
+                    <MasonryTile p={p} i={i} label={label} />
+                  </Reveal>
                 );
-              })
-            : (() => {
-                const items = categorized[active]?.items || [];
-                return (
-                  <div className="projects-grid">
-                    {items.map((p, i) => (
-                      <Reveal key={p.slug} delay={(i % 2) + 1}>
-                        <ProjectCard p={p} />
-                      </Reveal>
-                    ))}
-                  </div>
-                );
-              })()}
+              })}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -243,29 +303,6 @@ export default function Projects() {
               </Reveal>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ════════ GALLERY ════════ */}
-      <section className="section section-alt">
-        <div className="container">
-          <Reveal>
-            <SectionHead
-              eyebrow="Gallery"
-              title="Project snapshots"
-              text="Images from the Strut Engineering portfolio and office."
-            />
-          </Reveal>
-          <Reveal>
-            <div className="gallery">
-              {galleryImages.map((img) => (
-                <figure key={img.src}>
-                  <img src={img.src} alt={img.alt} loading="lazy" />
-                  <figcaption>{img.alt}</figcaption>
-                </figure>
-              ))}
-            </div>
-          </Reveal>
         </div>
       </section>
     </>

@@ -81,7 +81,12 @@ export default function Services() {
   return (
     <>
       <HeroBanner
-        image="/images/architecture.jpg"
+        image={[
+          "/images/svc-arch.jpg",
+          "/images/svc-structural.jpg",
+          "/images/svc-mep.jpg",
+          "/images/svc-infra.jpg",
+        ]}
         compact
         eyebrow="Our expertise"
         title="What we do"
@@ -99,16 +104,6 @@ export default function Services() {
               text="Each division operates with deep expertise in its domain — together, they deliver the complete engineering lifecycle."
             />
           </Reveal>
-
-          <div className="service-index" aria-label="Engineering disciplines">
-            {services.map((service, i) => (
-              <a className="service-index-item" href={`#service-${service.id}`} key={service.id}>
-                <span>{String(i + 1).padStart(2, "0")}</span>
-                <strong>{service.title.split(" & ")[0]}</strong>
-                <em>↗</em>
-              </a>
-            ))}
-          </div>
 
           <div className="svc-accordion-wrap">
             {services.map((s, i) => (

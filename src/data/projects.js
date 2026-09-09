@@ -623,3 +623,52 @@ export const allProjects = (() => {
 })();
 
 export const findProject = (slugId) => allProjects.find((p) => p.slug === slugId);
+
+// ── One record per real-world building ───────────────────
+// MEP / supervision / industrial records often describe the same
+// building as the design record ("MDF Factory Supervision" ≙ "MDF
+// Factory"). uniqueProjects collapses those into a single entry,
+// keeping the highest-ranked (design) record and merging the
+// disciplines it was delivered under.
+const CAT_RANK = {
+  "full-design": 0,
+  structural: 1,
+  industrial: 2,
+  mep: 3,
+  supervision: 4,
+  infrastructure: 5,
+};
+export const chipLabel = (category) =>
+  category.title
+    .replace(" Projects", "")
+    .replace("Contract Administration & Supervision", "Supervision");
+const recordKey = (name) =>
+  name
+    .toLowerCase()
+    .replace(
+      /\b(mep|supervision|industrial|five-star|5-star|mixed use|mixed-use|mub|building|hotel|resort)\b/g,
+      ""
+    )
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
+export const uniqueProjects = (() => {
+  const groups = new Map();
+  for (const p of allProjects) {
+    const key = recordKey(p.name);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(p);
+  }
+  return [...groups.values()].map((records) => {
+    const sorted = [...records].sort(
+      (a, b) =>
+        CAT_RANK[a.category.id] - CAT_RANK[b.category.id] ||
+        a.slug.localeCompare(b.slug)
+    );
+    const primary = sorted[0];
+    return {
+      ...primary,
+      disciplines: sorted.map((p) => chipLabel(p.category)),
+    };
+  });
+})();

@@ -23,11 +23,21 @@ export default function HeroBanner({
       <div className="hero-grid" aria-hidden="true" />
       {image ? (
         <div
-          className="hero-figure"
-          style={{ backgroundImage: `url(${image})` }}
+          className={`hero-figure ${Array.isArray(image) && image.length > 1 ? "is-collage" : ""}`}
+          style={Array.isArray(image) && image.length > 1 ? undefined : { backgroundImage: `url(${image})` }}
           role="img"
           aria-label={title}
-        />
+        >
+          {Array.isArray(image) && image.length > 1
+            ? image.map((src) => (
+                <span
+                  key={src}
+                  className="hero-collage-cell"
+                  style={{ backgroundImage: `url(${src})` }}
+                />
+              ))
+            : null}
+        </div>
       ) : (
         <div
           className="hero-figure"

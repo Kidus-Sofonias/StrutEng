@@ -2,6 +2,7 @@ import { company } from "../data/company";
 import HeroBanner from "../components/HeroBanner";
 import Reveal from "../components/Reveal";
 import SectionHead from "../components/SectionHead";
+import YearTimeline from "../components/YearTimeline";
 
 const pillars = [
   {
@@ -15,6 +16,110 @@ const pillars = [
   {
     title: "Standards & Value",
     text: "Adequate use of building code standards applied to the design of all projects — providing value-added service that saves time and cost to our customers.",
+  },
+];
+
+// Year-by-year development — each milestone opens a detail popup and
+// links to the real project that marked it.
+//
+// Years are grounded in verifiable anchors: the firm was established in 2015
+// and the Gorgora resort's on-lake construction began with contractor BEAEKA
+// in March 2021 (both recorded in the project/company data). Where no
+// external year is on record, milestones stay in their narrative position.
+const timelineData = [
+  {
+    year: "2015",
+    tag: "Addis Ababa",
+    title: "Strut begins",
+    text: "A focused structural design practice is established — and the first full commission lands.",
+    detail:
+      "Strut Engineering Plc opens in 2015 with a narrow focus: structural design done properly. The first commission — the Ethiopian Orthodox Church B+G+5 mixed-use building, delivered with the Addis Ababa City Administration Design and Construction Bureau — sets the tone for a practice that treats every beam as a promise.",
+    slug: "ethiopian-orthodox-church-b-g-5-mixed-use-building",
+    facts: [
+      ["Founded", "2015"],
+      ["First commission", "Orthodox Church B+G+5"],
+    ],
+  },
+  {
+    year: "2018",
+    tag: "Addis Ababa",
+    title: "Full lifecycle",
+    text: "Architecture, MEP, infrastructure and supervision join the practice.",
+    detail:
+      "The structural core grows into a full engineering practice. Amalto Real Estate B+G+12 becomes the first project Strut carries end to end — from first sketch through construction documents to site supervision, and on the MEP side.",
+    slug: "amalto-real-estate-b-g-12-mub",
+    facts: [
+      ["Building", "B+G+12"],
+      ["Delivery", "Design · MEP · Supervision"],
+    ],
+  },
+  {
+    year: "2021",
+    tag: "Gorgora · Lake Tana",
+    title: "Structures over water",
+    text: "A 1.2B-birr resort engineered on a site built inside the lake itself.",
+    detail:
+      "Contractor BEAEKA breaks ground on the Gorgora resort in March 2021 — the 40-hectare, three-hill ecotourism estate on the northern shore of Lake Tana. Strut delivers the full 1.2-billion-birr structural program: structures constructed inside the lake, a port facility and large floor-span solutions over water. Now operating as the 4-star Gorgora Eco Resort with 95 rooms.",
+    slug: "gebeta-lehager-project-gorgora",
+    facts: [
+      ["Investment", "1.2B birr"],
+      ["Site", "40 hectares"],
+      ["Rooms", "95 · now operating 4-star"],
+    ],
+  },
+  {
+    year: "2022",
+    tag: "Addis Ababa",
+    title: "Higher, wider",
+    text: "A 3B+G+27 five-star tower moves Strut into Ethiopia's tall-building tier.",
+    detail:
+      "A Vision Trading's 3B+G+27 five-star hotel — a 30-level tower on 7,500 m² with a seven-storey-deep excavation, convention centres, retail and a rooftop helipad — moves Strut into Ethiopia's tall-building tier, while factories, resorts and water infrastructure widen the practice nationwide.",
+    slug: "a-vision-trading-plc-3b-g-27-five-star-hotel",
+    facts: [
+      ["Storeys", "3B+G+27"],
+      ["Area", "7,500 m²"],
+      ["Extra", "Helipad + convention centre"],
+    ],
+  },
+  {
+    year: "2024",
+    tag: "Bole · Addis Ababa",
+    title: "Three towers, one structure",
+    text: "Grand Addis — three towers, one structure, in the Bole skyline.",
+    detail:
+      "A 7,000 m² residential development in Bole with below-grade parking and utilities. Three blocks on a 2,100 m² footprint rise up to 16 storeys — now a fixture of the Bole Rwanda skyline, and proof the practice scales its engineering without losing the detail work.",
+    slug: "grand-view-addis-real-estate",
+    facts: [
+      ["Blocks", "3"],
+      ["Storeys", "Up to 16"],
+      ["Area", "7,000 m²"],
+    ],
+  },
+  {
+    year: "2025",
+    tag: "Lake Tana · Bahir Dar",
+    title: "Resorts on Lake Tana",
+    text: "The Felege Ghion resort anchors a 4.5B-birr five-star program on the lake.",
+    detail:
+      "The Felege Ghion Eco-Resort — 4.5-billion-birr, 135-room, five-star — takes shape on the southern shore of Lake Tana under the national 'Dine for Ethiopia' initiative by BEAEKA's Rhoda Hospitality Group. Strut delivers the full design package: architecture, structural engineering and MEP systems for guest blocks, restaurants and lakeside facilities.",
+    slug: "fellege-ghion-resort-hotel",
+    facts: [
+      ["Investment", "4.5B birr"],
+      ["Rooms", "135"],
+      ["Status", "Under progress"],
+    ],
+  },
+  {
+    year: "Today",
+    tag: "300+ projects · 8 cities",
+    title: "Built for what is next",
+    text: "A senior-led team keeps engineering ambitious and buildable.",
+    detail:
+      "300+ projects across 8 cities behind it, and a practice still organised the same way it started — senior engineers, one conversation, structure first.",
+    facts: [
+      ["Projects", "300+"],
+      ["Cities", "8"],
+    ],
   },
 ];
 
@@ -76,27 +181,16 @@ export default function About() {
         </div>
       </section>
 
-      <section className="about-timeline section section-alt">
+      <section className="section section-alt">
         <div className="container">
-          <SectionHead
-            eyebrow="A practice in motion"
-            title="Ten years of making complexity legible"
-            text="The practice has grown by staying close to the work, the people and the places it serves."
-          />
-          <div className="about-timeline-track">
-            {[
-              ["2015", "Strut begins", "A focused structural design practice is established in Addis Ababa."],
-              ["2018", "Full lifecycle", "Architecture, MEP, infrastructure and supervision join the practice."],
-              ["2022", "Higher, wider", "The portfolio expands across towers, factories, resorts and public works."],
-              ["Today", "Built for what is next", "A senior-led team keeps engineering ambitious and buildable."],
-            ].map(([year, title, text]) => (
-              <article className="about-timeline-item" key={year}>
-                <span>{year}</span>
-                <h3>{title}</h3>
-                <p>{text}</p>
-              </article>
-            ))}
-          </div>
+          <Reveal>
+            <SectionHead
+              eyebrow="Year by year"
+              title="A decade in motion"
+              text="Scroll through the milestones — click any year to open the full story."
+            />
+          </Reveal>
+          <YearTimeline entries={timelineData} />
         </div>
       </section>
 
@@ -112,8 +206,12 @@ export default function About() {
           </Reveal>
           <div className="vm">
             {pillars.map((p, i) => (
-              <Reveal key={p.title} delay={(i % 2) + 1}>
-                <div className="vm-card">
+              <Reveal
+                key={p.title}
+                delay={(i % 2) + 1}
+                className={i === pillars.length - 1 ? "vm-feature" : ""}
+              >
+                <div className={`vm-card${i === pillars.length - 1 ? " vm-card-feature" : ""}`}>
                   <h3>{p.title}</h3>
                   <p>{p.text}</p>
                 </div>
@@ -175,17 +273,43 @@ export default function About() {
             />
           </Reveal>
           <Reveal>
-            <img
-              src="/images/vision.jpg"
-              alt="Strut Engineering organizational chart"
-              style={{
-                margin: "0 auto",
-                border: "1px solid var(--line)",
-                borderRadius: "var(--radius-lg)",
-                boxShadow: "var(--shadow-xl)",
-                maxWidth: "100%",
-              }}
-            />
+            <div className="org-chart">
+              <div className="org-card org-head">
+                <span className="org-role">General Manager</span>
+                <strong>{company.owner}</strong>
+                <span className="org-cred">{company.ownerTitle}</span>
+              </div>
+              <span className="org-stem" aria-hidden="true" />
+              <div className="org-row">
+                {[
+                  ["Architecture", "Concept and design development"],
+                  ["Structural", "Towers, industry and retrofitting"],
+                  ["MEP", "Mechanical, electrical & plumbing"],
+                  ["Infrastructure", "Roads, water and civil works"],
+                ].map(([role, desc]) => (
+                  <div className="org-cell" key={role}>
+                    <div className="org-card">
+                      <span className="org-role">{role}</span>
+                      <p>{desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="org-support">
+                <span className="org-support-label">Backed by</span>
+                <div className="org-row org-row-support">
+                  {["Contract Administration", "Project Coordination", "HR & Finance"].map(
+                    (role) => (
+                      <div className="org-cell" key={role}>
+                        <div className="org-card org-card-sm">
+                          <span className="org-role">{role}</span>
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+            </div>
           </Reveal>
         </div>
       </section>

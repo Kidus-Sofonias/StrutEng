@@ -26,14 +26,6 @@ export default function Footer() {
           </p>
         </div>
         <div>
-          <h4>Explore</h4>
-          <ul>
-            <li><Link to="/about">About</Link></li>
-            <li><Link to="/projects">Projects</Link></li>
-            <li><Link to="/contact">Contact</Link></li>
-          </ul>
-        </div>
-        <div>
           <h4>Contact</h4>
           <ul>
             <li><a href={`tel:${company.phoneRaw}`}>{company.phone}</a></li>

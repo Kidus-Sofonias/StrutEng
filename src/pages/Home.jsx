@@ -4,11 +4,12 @@ import Reveal from "../components/Reveal";
 import SectionHead from "../components/SectionHead";
 import CoverflowCarousel from "../components/CoverflowCarousel";
 import Cube3D from "../components/Cube3D";
+import EthiopiaReach from "../components/EthiopiaReach";
 import useCountUp from "../hooks/useCountUp";
-import { services, highDensity } from "../data/services";
+import { highDensity } from "../data/services";
 import { company } from "../data/company";
 import { clients } from "../data/clients";
-import { allProjects } from "../data/projects";
+import { allProjects, uniqueProjects } from "../data/projects";
 import { projectMedia } from "../data/media";
 
 const featured = [
@@ -24,15 +25,17 @@ const featured = [
   .filter(Boolean)
   .slice(0, 7);
 
-function BigStat({ value, suffix, label }) {
+function BigStat({ index, value, suffix, label, note }) {
   const [ref, n] = useCountUp(value, { start: true });
   return (
     <div className="bigstat" ref={ref}>
+      {index && <span className="stat-index">{index}</span>}
       <div className="number">
         {n}
         {suffix && <em>{suffix}</em>}
       </div>
       <div className="label">{label}</div>
+      {note && <p className="stat-note">{note}</p>}
     </div>
   );
 }
@@ -49,7 +52,7 @@ export default function Home() {
     <>
       {/* ════════ HERO ════════ */}
       <HeroBanner
-        image="/images/hero-building.jpg"
+        image="/images/home-hero.jpg"
         eyebrow="Est. 2015 · Addis Ababa, Ethiopia"
         title="Engineering that builds"
         accent="Ethiopia."
@@ -113,24 +116,6 @@ export default function Home() {
           <Reveal direction="scale">
             <Cube3D />
           </Reveal>
-          <ul className="index-list" style={{ marginTop: 60 }}>
-            {services.map((s, i) => (
-              <Reveal key={s.id} delay={(i % 3) + 1}>
-                <li>
-                  <div className="idx-num">
-                    {String(i + 1).padStart(2, "0")}
-                  </div>
-                  <div className="body">
-                    <h3>
-                      <Link to={`/services#${s.slug}`}>{s.title}</Link>
-                    </h3>
-                    <p>{s.short}</p>
-                  </div>
-                  <span className="idx-arrow">→</span>
-                </li>
-              </Reveal>
-            ))}
-          </ul>
         </div>
       </section>
 
@@ -192,14 +177,41 @@ export default function Home() {
       {/* ════════ STATS BAND ════════ */}
       <section className="section">
         <div className="container">
-          <div className="stats-band">
-            <BigStat value={300} suffix="+" label="Structural projects" />
-            <BigStat value={27} suffix="+" label="Storeys tallest design" />
-            <BigStat value={24} suffix="" label="Engineers" />
-            <BigStat value={5.7} suffix="B" label="Birr flagship resorts" />
+          <div className="stats-band stats-editorial">
+            <BigStat
+              index="01"
+              value={300}
+              suffix="+"
+              label="Structural projects"
+              note="Delivered across 8 cities since 2015"
+            />
+            <BigStat
+              index="02"
+              value={51}
+              suffix=""
+              label="Levels, largest multi-tower design"
+              note="Grand View Addis — three towers, one structure"
+            />
+            <BigStat
+              index="03"
+              value={24}
+              suffix=""
+              label="Engineers & specialists"
+              note="Architecture, structural, MEP and supervision"
+            />
+            <BigStat
+              index="04"
+              value={5.7}
+              suffix="B"
+              label="Birr flagship resort value"
+              note="Gorgora & Felege Ghion on Lake Tana"
+            />
           </div>
         </div>
       </section>
+
+      {/* ════════ BUILT ACROSS ETHIOPIA ════════ */}
+      <EthiopiaReach />
 
       {/* ════════ FEATURED PROJECTS: COVERFLOW ════════ */}
       <section className="section section-alt">
@@ -247,6 +259,23 @@ export default function Home() {
                 View All Projects
               </Link>
             </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ════════ PRINCIPLE PULL-QUOTE ════════ */}
+      <section className="section">
+        <div className="container">
+          <Reveal>
+            <figure className="pullquote">
+              <span className="pq-mark" aria-hidden="true">
+                “
+              </span>
+              <blockquote>
+                We don't draw buildings. We draw the forces that hold them up.
+              </blockquote>
+              <figcaption>The Strut principle — structure first</figcaption>
+            </figure>
           </Reveal>
         </div>
       </section>
