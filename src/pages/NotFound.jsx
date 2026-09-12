@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import HeroBanner from "../components/HeroBanner";
+import usePageMeta from "../hooks/usePageMeta";
 
 export default function NotFound() {
+  usePageMeta("Page Not Found");
   return (
     <>
       <HeroBanner

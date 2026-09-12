@@ -184,12 +184,28 @@ export default function ClientTimeline({ clients }) {
       if (!dragRef.current) return;
       const dx = e.clientX - dragRef.current.startX;
       const dy = e.clientY - dragRef.current.startY;
-      const distance = Math.abs(dx) >= Math.abs(dy) ? dx : -dy;
       const dragStep = 110;
-      const next = clampIndex(
-        dragRef.current.startPos - distance / dragStep,
-        n,
-      );
+
+      // Forward direction = "next client". Natural reading: scrolling the page
+      // DOWN (finger moves up, dy < 0) advances forward; swiping right does too.
+      const forward =
+        Math.abs(dx) >= Math.abs(dy) ? dx / dragStep : -dy / dragStep;
+      let next = dragRef.current.startPos + forward;
+
+      // At the ends, hand the overflow back to the page so the user can keep
+      // scrolling normally once the archive is exhausted.
+      if (next > n - 1) {
+        // Dragged forward past the last face -> page scrolls DOWN (to footer).
+        const overflow = next - (n - 1);
+        next = n - 1;
+        window.scrollBy({ top: overflow * dragStep, behavior: "auto" });
+      } else if (next < 0) {
+        // Dragged back past the first face -> page scrolls UP (to sections above).
+        const overflow = -next;
+        next = 0;
+        window.scrollBy({ top: -overflow * dragStep, behavior: "auto" });
+      }
+
       setFloat(next);
     },
     [n, setFloat],
@@ -214,43 +230,6 @@ export default function ClientTimeline({ clients }) {
       wheelLockRef.current = false;
     }, 450);
   }, [goToClient]);
-
-  /* Mobile: scroll-based client navigation (vertical scroll = next/prev client) */
-  useEffect(() => {
-    if (mode !== "swipe" || n < 2) return undefined;
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    if (!isMobile) return undefined;
-
-    let ticking = false;
-    let lastScrollY = window.scrollY;
-    let accumulated = 0;
-    const threshold = 80; // px of scroll to trigger next/prev
-
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        const currentY = window.scrollY;
-        const delta = currentY - lastScrollY;
-        lastScrollY = currentY;
-        accumulated += delta;
-
-        if (Math.abs(accumulated) >= threshold) {
-          const direction = accumulated > 0 ? 1 : -1;
-          const current = Math.round(posRef.current);
-          const next = current + direction;
-          if (next >= 0 && next < n && next !== current) {
-            goToClient(next);
-          }
-          accumulated = 0;
-        }
-        ticking = false;
-      });
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [mode, n, goToClient]);
 
   /* ── Reset when clients or mode change ── */
   useEffect(() => {
@@ -421,12 +400,6 @@ export default function ClientTimeline({ clients }) {
           <div className="tt-stage-inner">
             <div className="tt-stage-top">
               <span className="tt-stage-note">The client archive</span>
-              {mode === "swipe" && (
-                <span className="tt-stage-hint">swipe to turn</span>
-              )}
-              {mode === "scroll" && (
-                <span className="tt-stage-hint">scroll to turn</span>
-              )}
             </div>
 
             <div className="tt-stage-main">

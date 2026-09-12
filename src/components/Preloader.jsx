@@ -5,13 +5,23 @@ export default function Preloader() {
   const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
+    // Skip the branded intro entirely for repeat visits this session —
+    // it protects first-paint/LCP only, not every page load.
+    if (sessionStorage.getItem("strut-preloaded")) {
+      setDone(true);
+      setHidden(true);
+      return;
+    }
     let timer;
-    const finish = () => setDone(true);
+    const finish = () => {
+      sessionStorage.setItem("strut-preloaded", "1");
+      setDone(true);
+    };
     if (document.readyState === "complete") {
-      timer = setTimeout(finish, 1200);
+      timer = setTimeout(finish, 600);
     } else {
       window.addEventListener("load", finish);
-      timer = setTimeout(finish, 3000);
+      timer = setTimeout(finish, 1500);
     }
     return () => {
       window.removeEventListener("load", finish);

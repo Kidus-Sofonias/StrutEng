@@ -6,14 +6,14 @@
 export const mediaPools = {
   "full-design": [
     { src: "/images/project-tall-1.jpg", alt: "High-rise mixed-use building" },
-    { src: "/images/hero-building.jpg", alt: "Tower under construction" },
+    { src: "/images/home-hero.jpg", alt: "Tower under construction" },
     { src: "/images/architecture.jpg", alt: "Architectural render and plans" },
     { src: "/images/project-1.jpg", alt: "Building design project" },
   ],
   structural: [
     { src: "/images/project-tall-2.jpg", alt: "Tall building structural works" },
     { src: "/images/project-tall-1.jpg", alt: "Reinforced concrete tower" },
-    { src: "/images/hero-building.jpg", alt: "High-rise structural frame" },
+    { src: "/images/home-hero.jpg", alt: "High-rise structural frame" },
     { src: "/images/project-1.jpg", alt: "Structural engineering site" },
   ],
   mep: [
@@ -42,7 +42,7 @@ export const mediaPools = {
   ],
   default: [
     { src: "/images/project-1.jpg", alt: "Strut Engineering project" },
-    { src: "/images/hero-building.jpg", alt: "Strut Engineering building" },
+    { src: "/images/home-hero.jpg", alt: "Strut Engineering building" },
   ],
 };
 

@@ -3,12 +3,13 @@ import { Link } from "react-router-dom";
 import HeroBanner from "../components/HeroBanner";
 import Reveal from "../components/Reveal";
 import SectionHead from "../components/SectionHead";
+import usePageMeta from "../hooks/usePageMeta";
 import { services, highDensity } from "../data/services";
 
 function ServiceAccordion({ service, isOpen, onToggle, index }) {
   return (
     <Reveal delay={(index % 3) + 1}>
-      <div id={`service-${service.id}`} className={`svc-accordion ${isOpen ? "open" : ""}`}>
+      <div id={`service-${service.slug}`} className={`svc-accordion ${isOpen ? "open" : ""}`}>
         <button
           className="svc-accordion-header"
           onClick={onToggle}
@@ -77,31 +78,77 @@ function ServiceAccordion({ service, isOpen, onToggle, index }) {
 
 export default function Services() {
   const [openIdx, setOpenIdx] = useState(0);
+  const structural = services.find((s) => s.id === "structural");
+  const structuralIdx = services.findIndex((s) => s.id === "structural");
+
+  usePageMeta(
+    "Services — Structural Engineering Design",
+    "Structural engineering is Strut Engineering's core discipline — 300+ projects across Ethiopia — supported by architectural, infrastructure, industrial and MEP design."
+  );
 
   return (
     <>
       <HeroBanner
         image={[
-          "/images/svc-arch.jpg",
           "/images/svc-structural.jpg",
+          "/images/svc-arch.jpg",
           "/images/svc-mep.jpg",
           "/images/svc-infra.jpg",
         ]}
         compact
         eyebrow="Our expertise"
-        title="What we do"
-        accent="Six divisions. One team."
-        description="From concept sketches to construction documents and site supervision — the complete engineering lifecycle, in-house."
+        title="Structural at the core"
+        accent="of everything we design."
+        description="Structural engineering is our foundation — 300+ projects across Ethiopia — with architectural, infrastructure, industrial and MEP design delivered in-house around it."
       />
+
+      {/* ════════ STRUCTURAL FEATURE ════════ */}
+      <section className="section section-alt structural-feature">
+        <div className="container split">
+          <Reveal direction="left">
+            <div className="split-figure">
+              <span className="figure-tag">Core discipline · 300+ projects</span>
+              <img
+                src="/images/svc-structural.jpg"
+                alt="Structural engineering project by Strut Engineering"
+                loading="lazy"
+              />
+            </div>
+          </Reveal>
+          <Reveal direction="right">
+            <div className="split-text">
+              <span className="eyebrow">Where we lead</span>
+              <h2 className="headline">{structural.title}</h2>
+              <p>{structural.intro}</p>
+              <div className="structural-feature-caps">
+                {structural.items.slice(0, 6).map((item) => (
+                  <span key={item.name} className="structural-cap-chip">
+                    {item.name}
+                  </span>
+                ))}
+              </div>
+              <button
+                className="btn btn-primary"
+                style={{ marginTop: 20 }}
+                onClick={() => setOpenIdx(structuralIdx)}
+                aria-controls={`service-${structural.slug}`}
+                aria-expanded={openIdx === structuralIdx}
+              >
+                See Structural Capabilities
+              </button>
+            </div>
+          </Reveal>
+        </div>
+      </section>
 
       {/* ════════ SERVICES ACCORDION ════════ */}
       <section className="section" style={{ paddingTop: 64 }}>
         <div className="container">
           <Reveal>
             <SectionHead
-              eyebrow="Six divisions"
-              title="Comprehensive engineering services"
-              text="Each division operates with deep expertise in its domain — together, they deliver the complete engineering lifecycle."
+              eyebrow="Structural first, full lifecycle"
+              title="Complete engineering services, led by structural design"
+              text="Structural engineering anchors our practice — each additional division extends that same rigor across the full engineering lifecycle, in-house."
             />
           </Reveal>
 

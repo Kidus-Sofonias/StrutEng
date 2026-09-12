@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import HeroBanner from "../components/HeroBanner";
 import Reveal from "../components/Reveal";
@@ -11,15 +11,17 @@ import {
   chipLabel,
 } from "../data/projects";
 import { projectMedia } from "../data/media";
+import usePageMeta from "../hooks/usePageMeta";
+import VideoFacade from "../components/VideoFacade";
 
 const projectVideos = [
   {
     title: "Gorgora Eco Resort — Gebeta Lehager Project",
-    url: "https://www.youtube.com/embed/eU5tdUQJWcw",
+    url: "https://www.youtube-nocookie.com/embed/eU5tdUQJWcw",
   },
   {
     title: "Felege Ghion Eco-Resort Inauguration",
-    url: "https://www.youtube.com/embed/8FjQeXb0O9U",
+    url: "https://www.youtube-nocookie.com/embed/8FjQeXb0O9U",
   },
 ];
 
@@ -147,6 +149,26 @@ function MasonryTile({ p, i, label }) {
 
 export default function Projects() {
   const [active, setActive] = useState("all");
+  const [hasScrolled, setHasScrolled] = useState(false);
+  const masonryWrapperRef = useRef(null);
+
+  usePageMeta(
+    "Projects — Portfolio",
+    "300+ engineering projects across Ethiopia — high-rise towers, resorts, factories and infrastructure designed by Strut Engineering Plc."
+  );
+
+  /* ── Detect user scroll to shrink the wrapper ── */
+  useEffect(() => {
+    const wrapper = masonryWrapperRef.current;
+    if (!wrapper) return;
+    const onScroll = () => {
+      if (wrapper.scrollTop > 40 && !hasScrolled) {
+        setHasScrolled(true);
+      }
+    };
+    wrapper.addEventListener("scroll", onScroll, { passive: true });
+    return () => wrapper.removeEventListener("scroll", onScroll);
+  }, [hasScrolled]);
   const cats = projectCategories.filter((c) => c.projects.length > 0);
   const totalProjects = allProjects.length;
 
@@ -232,6 +254,7 @@ export default function Projects() {
               <button
                 className={`filter-btn ${active === "all" ? "active" : ""}`}
                 onClick={() => setActive("all")}
+                aria-pressed={active === "all"}
               >
                 All ({totalProjects})
               </button>
@@ -240,6 +263,7 @@ export default function Projects() {
                   key={c.id}
                   className={`filter-btn ${active === c.id ? "active" : ""}`}
                   onClick={() => setActive(c.id)}
+                  aria-pressed={active === c.id}
                 >
                   {c.title.split(" ").slice(0, 2).join(" ")} (
                   {(categorized[c.id]?.items || []).length})
@@ -247,9 +271,20 @@ export default function Projects() {
               ))}
             </div>
           </Reveal>
-          <p className="m-scroll-hint">Swipe up to browse ↑</p>
+          {/* ── Animated scroll indicator (TikTok/Instagram style) ── */}
+          <div className={`scroll-indicator ${hasScrolled ? "hidden" : ""}`}>
+            <div className="scroll-indicator-icon">
+              <span className="chevron"></span>
+              <span className="chevron"></span>
+              <span className="chevron"></span>
+            </div>
+            <span className="scroll-indicator-text">Swipe up to browse</span>
+          </div>
 
-          <div className="masonry-wrapper">
+          <div
+            ref={masonryWrapperRef}
+            className={`masonry-wrapper ${hasScrolled ? "shrunk" : ""}`}
+          >
             <div className="masonry">
               {(active === "all"
                 ? uniqueProjects
@@ -281,24 +316,8 @@ export default function Projects() {
             {projectVideos.map((v) => (
               <Reveal key={v.url}>
                 <div>
-                  <div className="video">
-                    <iframe
-                      src={v.url}
-                      title={v.title}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      loading="lazy"
-                    />
-                  </div>
-                  <p
-                    style={{
-                      marginTop: 16,
-                      fontWeight: 600,
-                      color: "var(--ink)",
-                    }}
-                  >
-                    {v.title}
-                  </p>
+                  <VideoFacade url={v.url} title={v.title} />
+                  <p className="video-caption">{v.title}</p>
                 </div>
               </Reveal>
             ))}

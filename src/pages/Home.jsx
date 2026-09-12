@@ -3,10 +3,10 @@ import HeroBanner from "../components/HeroBanner";
 import Reveal from "../components/Reveal";
 import SectionHead from "../components/SectionHead";
 import CoverflowCarousel from "../components/CoverflowCarousel";
-import Cube3D from "../components/Cube3D";
 import EthiopiaReach from "../components/EthiopiaReach";
 import useCountUp from "../hooks/useCountUp";
-import { highDensity } from "../data/services";
+import usePageMeta from "../hooks/usePageMeta";
+import { services, highDensity } from "../data/services";
 import { company } from "../data/company";
 import { clients } from "../data/clients";
 import { allProjects, uniqueProjects } from "../data/projects";
@@ -48,6 +48,12 @@ function statusClass(status) {
 }
 
 export default function Home() {
+  usePageMeta(
+    "Strut Engineering Plc — Structural Engineering Design & Consulting",
+    "Strut Engineering Plc — Ethiopia's structural engineering specialists since 2015. Over 300 structural projects, from high-rise towers to stadiums, plus architectural, infrastructure, industrial and MEP design."
+  );
+  const structural = services.find((s) => s.id === "structural");
+  const otherDivisions = services.filter((s) => s.id !== "structural");
   return (
     <>
       {/* ════════ HERO ════════ */}
@@ -71,13 +77,20 @@ export default function Home() {
       />
 
       {/* ════════ CLIENT MARQUEE ════════ */}
-      <div className="marquee" aria-label="Our clients">
+      {/* Marquee text is duplicated for the loop and purely decorative —
+          screen readers get the flat list below instead. */}
+      <div className="marquee" aria-hidden="true">
         <div className="marquee-track">
           {[...clients, ...clients].map((c, i) => (
             <span key={`marquee-${i}`}>{c}</span>
           ))}
         </div>
       </div>
+      <ul className="sr-only">
+        {clients.map((c) => (
+          <li key={c}>{c}</li>
+        ))}
+      </ul>
 
       <section className="home-signal section">
         <div className="container home-signal-grid">
@@ -96,25 +109,71 @@ export default function Home() {
             </div>
           </div>
           <div className="home-signal-figure">
-            <img src="/images/project-tall-2.jpg" alt="Structural engineering project" />
+            <img loading="lazy" decoding="async" src="/images/project-tall-2.jpg" alt="Structural engineering project" />
             <span className="home-signal-stamp">Built for tomorrow</span>
             <span className="home-signal-coordinates">09°01'N · 38°45'E</span>
           </div>
         </div>
       </section>
 
-      {/* ════════ SERVICES: 3D Cube + Numbered Index ════════ */}
-      <section className="section">
+      {/* ════════ SERVICES: Structural at the core ════════ */}
+      <section className="section structural-core">
         <div className="container">
           <Reveal>
             <SectionHead
               eyebrow="What we do"
-              title="Six divisions, one team"
-              text="From concept to construction — 24 specialists covering the full engineering lifecycle."
+              title="Structural engineering is our core"
+              text="Over 300 structural projects across Ethiopia — from the tallest towers to the biggest stadiums. Every other discipline orbits that foundation."
             />
           </Reveal>
-          <Reveal direction="scale">
-            <Cube3D />
+          <div className="structural-core-grid">
+            <Reveal direction="left">
+              <div className="split-figure">
+                <span className="figure-tag">Core discipline</span>
+                <img
+                  src="/images/svc-structural.jpg"
+                  alt="Structural engineering project by Strut Engineering"
+                  loading="lazy"
+                />
+              </div>
+            </Reveal>
+            <Reveal direction="right">
+              <div className="structural-core-text">
+                <h3 className="headline">{structural.title}</h3>
+                <p>{structural.intro}</p>
+                <ul className="structural-cap-list">
+                  {structural.items.slice(0, 5).map((item) => (
+                    <li key={item.name}>{item.name}</li>
+                  ))}
+                </ul>
+                <div className="structural-core-actions">
+                  <Link to="/services#structural-engineering" className="btn btn-primary">
+                    Explore Structural Design
+                  </Link>
+                  <Link to="/services" className="btn btn-ghost">
+                    All Services
+                  </Link>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+          <Reveal>
+            <div className="structural-divisions">
+              <span className="structural-divisions-label">
+                Supported in-house by
+              </span>
+              <div className="structural-divisions-row">
+                {otherDivisions.map((s) => (
+                  <Link
+                    key={s.id}
+                    to={`/services#${s.slug}`}
+                    className="structural-division-chip"
+                  >
+                    {s.title}
+                  </Link>
+                ))}
+              </div>
+            </div>
           </Reveal>
         </div>
       </section>
@@ -144,7 +203,7 @@ export default function Home() {
           <Reveal direction="left">
             <div className="split-figure">
               <span className="figure-tag">Since 2015</span>
-              <img
+              <img loading="lazy" decoding="async"
                 src="/images/about.jpg"
                 alt="Strut Engineering team and office"
               />
@@ -286,7 +345,7 @@ export default function Home() {
           <Reveal direction="left">
             <div className="split-figure">
               <span className="figure-tag">Specialty</span>
-              <img
+              <img loading="lazy" decoding="async"
                 src="/images/project-tall-1.jpg"
                 alt="High-density apartment tower"
               />

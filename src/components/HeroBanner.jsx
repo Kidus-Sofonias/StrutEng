@@ -25,8 +25,7 @@ export default function HeroBanner({
         <div
           className={`hero-figure ${Array.isArray(image) && image.length > 1 ? "is-collage" : ""}`}
           style={Array.isArray(image) && image.length > 1 ? undefined : { backgroundImage: `url(${image})` }}
-          role="img"
-          aria-label={title}
+          aria-hidden="true"
         >
           {Array.isArray(image) && image.length > 1
             ? image.map((src) => (

@@ -262,7 +262,7 @@ export default function YearTimeline({ entries }) {
               ×
             </button>
             {active.img && (
-              <img
+              <img loading="lazy" decoding="async"
                 className="yt-modal-img"
                 src={active.img.src}
                 alt={active.img.alt}

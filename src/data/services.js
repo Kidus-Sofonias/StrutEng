@@ -1,5 +1,27 @@
 export const services = [
   {
+    id: "structural",
+    slug: "structural-engineering",
+    icon: "🏗️",
+    title: "Structural Engineering Design",
+    short:
+      "Our core expertise — over 300 projects across Ethiopia, from high-rise towers and stadiums to factories and custom retrofits.",
+    intro:
+      "The mastery you can find at Strut Engineering is its specialization in structural engineering. We have been engaged in structural engineering of over 300 projects all over Ethiopia — including some of the tallest buildings, the biggest stadiums, and major industrial facilities.",
+    items: [
+      { name: "Reinforced Concrete Design", desc: "High-rise buildings, towers, and complex structures" },
+      { name: "Steel Structure Design", desc: "Warehouses, industrial buildings, and large-span structures" },
+      { name: "Pile Foundation Design", desc: "Deep foundations for heavy loads and challenging soil conditions" },
+      { name: "Machine Foundation Design", desc: "Specialized foundations for factory equipment and vibration-sensitive machinery" },
+      { name: "Retrofitting & Structural Modification", desc: "Custom reinforcements and expansions for existing structures" },
+      { name: "Earthquake Design", desc: "Seismic-resistant design for steel and concrete buildings" },
+      { name: "Composite Structural Design", desc: "Combined steel-concrete systems for optimal performance" },
+      { name: "Shoring Design", desc: "Temporary support systems for deep excavations" },
+    ],
+    focus: [],
+    note: "We implement state-of-the-art software for buildings, bridges, steel structures, machine foundations, pile foundations, shoring and foundation design.",
+  },
+  {
     id: "architectural",
     slug: "architectural-landscape",
     icon: "🏛️",
@@ -36,35 +58,6 @@ export const services = [
         text: "Energy efficiency through sustainable materials and renewables (solar, wind); natural lighting via skylights and strategic window placement; water conservation with low-flow fixtures, permeable pavements and green infrastructure.",
       },
     ],
-  },
-  {
-    id: "structural",
-    slug: "structural-engineering",
-    icon: "🏗️",
-    title: "Structural Engineering Design",
-    short:
-      "Our specialty — over 300 projects across Ethiopia, including some of the tallest buildings and biggest stadiums.",
-    intro:
-      "The mastery you can find at Strut Engineering is its specialization in structural engineering. We have been engaged in structural engineering of over 300 projects all over Ethiopia — including some of the tallest buildings as well as the biggest stadium projects.",
-    items: [
-      { name: "Reinforced Concrete Design", desc: "" },
-      { name: "Pile Foundation Design", desc: "" },
-      { name: "Shoring Design", desc: "" },
-      { name: "Offshore Foundation Design", desc: "" },
-      { name: "Steel Structure Design for Warehouses", desc: "" },
-      { name: "Steel Structure Design for Buildings", desc: "" },
-      { name: "Composite Structural Design for Buildings", desc: "" },
-      {
-        name: "Earthquake Design for Steel & Concrete Buildings",
-        desc: "",
-      },
-      {
-        name: "Machine Foundation Design for Factories",
-        desc: "",
-      },
-    ],
-    focus: [],
-    note: "We implement state-of-the-art software for buildings, bridges, steel structures, machine foundations, pile foundations, shoring and foundation design.",
   },
   {
     id: "infrastructure",

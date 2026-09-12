@@ -4,6 +4,7 @@ import HeroBanner from "../components/HeroBanner";
 import Reveal from "../components/Reveal";
 import { useParams } from "react-router-dom";
 import { findProject, allProjects } from "../data/projects";
+import usePageMeta from "../hooks/usePageMeta";
 import { company } from "../data/company";
 import { projectMedia } from "../data/media";
 import NotFound from "./NotFound";
@@ -103,7 +104,7 @@ function StackedGallery({ images, projectName }) {
                 opacity: 1 - stackIdx * 0.2,
               }}
             >
-              <img src={src} alt="" />
+              <img loading="lazy" decoding="async" src={src} alt="" />
             </div>
           );
         })}
@@ -125,7 +126,7 @@ function StackedGallery({ images, projectName }) {
                     opacity: 1 - stackIdx * 0.2,
                   }}
                 >
-                  <img src={src} alt="" />
+                  <img loading="lazy" decoding="async" src={src} alt="" />
                 </div>
               );
             }
@@ -136,7 +137,7 @@ function StackedGallery({ images, projectName }) {
       <div
         className={`stacked-card stacked-main ${animating ? (direction > 0 ? "slide-out-left" : "slide-out-right") : "slide-in"}`}
       >
-        <img
+        <img loading="lazy" decoding="async"
           src={images[activeIdx]}
           alt={`${projectName} — photo ${activeIdx + 1}`}
         />
@@ -176,7 +177,7 @@ function StackedGallery({ images, projectName }) {
             aria-label={`Show photo ${i + 1} of ${images.length}`}
             aria-current={i === activeIdx ? "true" : undefined}
           >
-            <img src={src} alt={`Thumbnail ${i + 1}`} />
+            <img loading="lazy" decoding="async" src={src} alt={`Thumbnail ${i + 1}`} />
           </button>
         ))}
       </div>
@@ -187,6 +188,13 @@ function StackedGallery({ images, projectName }) {
 export default function ProjectDetail() {
   const { slug } = useParams();
   const project = findProject(slug);
+
+  usePageMeta(
+    project ? project.name : "Project Not Found",
+    project
+      ? `${project.name} — ${project.client}, ${project.location}. A ${project.category?.title || "engineering"} project by Strut Engineering Plc.`
+      : undefined
+  );
 
   if (!project) return <NotFound />;
 

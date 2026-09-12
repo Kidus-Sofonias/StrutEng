@@ -1,6 +1,7 @@
 import { useState } from "react";
 import HeroBanner from "../components/HeroBanner";
 import Reveal from "../components/Reveal";
+import usePageMeta from "../hooks/usePageMeta";
 import { company } from "../data/company";
 
 // Minimal stroke icons replacing emoji glyphs (see .c-line .ico).
@@ -51,16 +52,41 @@ function buildMailto({ name, email, phone, service, message }) {
 export default function Contact() {
   const [form, setForm] = useState(emptyForm);
   const [sent, setSent] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  const handleChange = (e) =>
+  usePageMeta(
+    "Contact",
+    "Get in touch with Strut Engineering PLC — call, email or send a project inquiry from Addis Ababa, Ethiopia."
+  );
+
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    if (errors[e.target.name]) {
+      setErrors({ ...errors, [e.target.name]: null });
+    }
+    setSent(false);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.name || !form.email || !form.message) return;
+    // Validate visibly — no silent failure paths.
+    const next = {};
+    if (!form.name.trim()) next.name = "Please enter your full name.";
+    if (!form.email.trim()) {
+      next.email = "Please enter your email address.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      next.email = "Please enter a valid email address.";
+    }
+    if (!form.message.trim()) next.message = "Please tell us a little about your project.";
+    setErrors(next);
+    if (Object.keys(next).length > 0) return;
+
+    // Open the user's email app with the message pre-filled.
     window.location.href = buildMailto(form);
     setSent(true);
   };
+
+  const errorText = Object.values(errors).filter(Boolean).join(" ");
 
   return (
     <>
@@ -166,10 +192,12 @@ export default function Contact() {
                   lineHeight: 1.7,
                 }}
               >
-                This opens your email app and sends directly to {company.email} —
-                no third-party service, completely free.
+                This opens your email app with the message pre-filled for{" "}
+                {company.email}. If no email app opens on your device, simply
+                write to us directly at{" "}
+                <a href={`mailto:${company.email}`}>{company.email}</a>.
               </p>
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} noValidate>
                 <div className="form-row">
                   <label htmlFor="name">Full name *</label>
                   <input
@@ -179,7 +207,10 @@ export default function Contact() {
                     value={form.name}
                     onChange={handleChange}
                     placeholder="Your name"
+                    aria-invalid={!!errors.name}
+                    aria-describedby={errors.name ? "form-status" : undefined}
                   />
+                  {errors.name && <span className="form-error">{errors.name}</span>}
                 </div>
                 <div className="form-row">
                   <label htmlFor="email">Email *</label>
@@ -191,7 +222,10 @@ export default function Contact() {
                     value={form.email}
                     onChange={handleChange}
                     placeholder="you@example.com"
+                    aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? "form-status" : undefined}
                   />
+                  {errors.email && <span className="form-error">{errors.email}</span>}
                 </div>
                 <div className="form-row">
                   <label htmlFor="phone">Phone</label>
@@ -231,17 +265,29 @@ export default function Contact() {
                     value={form.message}
                     onChange={handleChange}
                     placeholder="Tell us about your project…"
+                    aria-invalid={!!errors.message}
+                    aria-describedby={errors.message ? "form-status" : undefined}
                   />
+                  {errors.message && <span className="form-error">{errors.message}</span>}
                 </div>
                 <button type="submit" className="btn btn-primary">
                   Send via Email
                 </button>
-                {sent && (
-                  <div className="form-status ok">
-                    Your email app opened with the message pre-filled — just
-                    hit Send!
+                <div className="form-status-spacer" style={{ marginTop: 14 }}>
+                  <div
+                    id="form-status"
+                    className={sent ? "form-status ok" : "form-status"}
+                    role="status"
+                    aria-live="polite"
+                  >
+                    {sent
+                      ? "Your email app should have opened with the message pre-filled — just hit Send. If nothing opened, email us directly at "
+                      : errorText}
+                    {sent && (
+                      <a href={`mailto:${company.email}`}>{company.email}</a>
+                    )}
                   </div>
-                )}
+                </div>
               </form>
             </div>
           </Reveal>

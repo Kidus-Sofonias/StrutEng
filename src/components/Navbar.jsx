@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
 
 const links = [
+  { to: "/", label: "Home" },
   { to: "/about", label: "About" },
   { to: "/services", label: "Services" },
   { to: "/projects", label: "Projects" },
@@ -18,6 +19,23 @@ export default function Navbar() {
   const lastScrollY = useRef(0);
   const location = useLocation();
   const panelRef = useRef(null);
+  const toggleRef = useRef(null);
+  const lastFocusedRef = useRef(null);
+
+  /* ── Mobile panel a11y: move focus in, trap Tab, restore on close ── */
+  useEffect(() => {
+    if (!open) return;
+    lastFocusedRef.current = document.activeElement;
+    // Move focus to the first interactive element in the panel.
+    const first = panelRef.current?.querySelector(
+      "button, a[href], [tabindex]:not([tabindex='-1'])"
+    );
+    first?.focus();
+    return () => {
+      // Return focus to the toggle button when the panel closes.
+      lastFocusedRef.current?.focus?.();
+    };
+  }, [open]);
 
   /* ── Scroll logic: detect scroll direction + hero area ── */
   const onScroll = useCallback(() => {
@@ -56,10 +74,26 @@ export default function Navbar() {
     return () => { document.body.style.overflow = previousOverflow; };
   }, [open]);
 
-  /* ── Keyboard: Escape to close ── */
+  /* ── Keyboard: Escape to close + focus trap inside panel ── */
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === "Escape" && open) setOpen(false);
+      if (!open) return;
+      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Tab" && panelRef.current) {
+        const focusables = panelRef.current.querySelectorAll(
+          "button:not([disabled]), a[href]"
+        );
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -74,6 +108,7 @@ export default function Navbar() {
           darkNav && "dark-mode",
           hidden && !open && "nav-hidden",
           atTop && "at-top",
+          open && "nav-hidden-mobile",
         ]
           .filter(Boolean)
           .join(" ")}
@@ -104,6 +139,7 @@ export default function Navbar() {
 
           {/* ── Animated Hamburger ── */}
           <button
+            ref={toggleRef}
             className={`nav-toggle ${open ? "open" : ""}`}
             aria-label={open ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={open}
@@ -117,11 +153,14 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* ── Mobile Full-Screen Overlay ── */}
+      {/* ── Mobile Full-Screen Overlay (modal dialog) ── */}
       <div
         id="mobile-nav-panel"
         ref={panelRef}
         className={`mobile-overlay ${open ? "open" : ""}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation menu"
         aria-hidden={!open}
       >
         <div className="mobile-overlay-bg" onClick={() => setOpen(false)} />
@@ -129,12 +168,20 @@ export default function Navbar() {
           {/* ── Panel Header ── */}
           <div className="mobile-panel-header">
             <Link to="/" className="brand brand-mobile" onClick={() => setOpen(false)}>
-              <img src="/images/logo-transparent.png" alt="Strut Engineering home" />
+              <img src="/images/logo-full.png" alt="Strut Engineering home" />
               <span className="word">
                 STRUT ENGINEERING
                 <small>PLC · Est. 2015</small>
               </span>
             </Link>
+            <button
+              className="mobile-close-btn"
+              aria-label="Close navigation menu"
+              onClick={() => setOpen(false)}
+            >
+              <span className="close-bar"></span>
+              <span className="close-bar"></span>
+            </button>
           </div>
 
           {/* ── Staggered Links ── */}

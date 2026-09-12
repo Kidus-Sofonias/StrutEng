@@ -3,6 +3,7 @@ import HeroBanner from "../components/HeroBanner";
 import Reveal from "../components/Reveal";
 import SectionHead from "../components/SectionHead";
 import YearTimeline from "../components/YearTimeline";
+import usePageMeta from "../hooks/usePageMeta";
 
 const pillars = [
   {
@@ -124,6 +125,10 @@ const timelineData = [
 ];
 
 export default function About() {
+  usePageMeta(
+    "About",
+    "Strut Engineering PLC — established 2015 in Addis Ababa, specializing in structural design for buildings, factories, stadiums and bridges."
+  );
   return (
     <>
       <HeroBanner
@@ -175,7 +180,7 @@ export default function About() {
           <Reveal direction="right">
             <div className="split-figure">
               <span className="figure-tag">Est. 2015</span>
-              <img src="/images/firm.jpg" alt="Strut Engineering firm" />
+              <img loading="lazy" decoding="async" src="/images/firm.jpg" alt="Strut Engineering firm" />
             </div>
           </Reveal>
         </div>
@@ -255,7 +260,7 @@ export default function About() {
             <Reveal direction="right">
               <div className="split-figure">
                 <span className="figure-tag">Our Office</span>
-                <img src="/images/firm.jpg" alt="Strut Engineering team" />
+                <img loading="lazy" decoding="async" src="/images/firm.jpg" alt="Strut Engineering team" />
               </div>
             </Reveal>
           </div>
